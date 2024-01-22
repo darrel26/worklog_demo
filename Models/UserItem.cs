@@ -12,6 +12,8 @@ namespace worklog_demo.Models
         [Key]
         public int userID { get; set; }
         [Required]
+        public string fullName { get; set; }
+        [Required]
         public string username { get; set; }
         [Required]
         public string password { get; set; }

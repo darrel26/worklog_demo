@@ -29,7 +29,7 @@ namespace worklog_demo.Data
             using (MySqlConnection conn = GetConnection())
             {
                 conn.Open();
-                MySqlCommand cmd = new MySqlCommand("SELECT * FROM users", conn);
+                MySqlCommand cmd = new MySqlCommand("SELECT * FROM tb_users", conn);
                 using (MySqlDataReader reader = cmd.ExecuteReader())
                 {
                     while (reader.Read())
@@ -37,8 +37,9 @@ namespace worklog_demo.Data
                         list.Add(new UserItem()
                         {
                             userID = reader.GetInt32("userID"),
+                            fullName = reader.GetString("fullName"),
                             username = reader.GetString("username"),
-                            password = reader.GetString("password"),
+                            password = reader.GetString("password")
                         });
                     }
                 }

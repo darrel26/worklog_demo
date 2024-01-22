@@ -28,7 +28,7 @@ namespace worklog_demo.Data
             using (MySqlConnection conn = GetConnection())
             {
                 conn.Open();
-                MySqlCommand cmd = new MySqlCommand("SELECT * FROM project", conn);
+                MySqlCommand cmd = new MySqlCommand("SELECT * FROM tb_projects", conn);
                 using (MySqlDataReader reader = cmd.ExecuteReader())
                 {
                     while (reader.Read())
