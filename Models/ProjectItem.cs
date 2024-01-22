@@ -12,6 +12,7 @@ namespace worklog_demo.Models
         [Key]
         public int projectID { get; set; }
         [Required]
+        [StringLength(50)]
         public string projectName { get; set; }
     }
 }
