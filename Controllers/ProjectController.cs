@@ -9,7 +9,7 @@ using worklog_demo.Models;
 
 namespace worklog_demo.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class ProjectController : ControllerBase
     {
@@ -21,7 +21,7 @@ namespace worklog_demo.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<ProjectItem>> GetMovieItems()
+        public ActionResult<IEnumerable<TbProject>> GetMovieItems()
         {
             _context = HttpContext.RequestServices.GetService(typeof(ProjectContext)) as ProjectContext;
             return _context.GetAllProject();

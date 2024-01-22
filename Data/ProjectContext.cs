@@ -1,9 +1,5 @@
 ﻿using MySql.Data.MySqlClient;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using worklog_demo.Models;
 
 namespace worklog_demo.Data
@@ -22,21 +18,21 @@ namespace worklog_demo.Data
             return new MySqlConnection(ConnectionString);
         }
 
-        public List<ProjectItem> GetAllProject()
+        public List<TbProject> GetAllProject()
         {
-            List<ProjectItem> list = new List<ProjectItem>();
+            List<TbProject> list = new List<TbProject>();
             using (MySqlConnection conn = GetConnection())
             {
                 conn.Open();
-                MySqlCommand cmd = new MySqlCommand("SELECT * FROM project", conn);
+                MySqlCommand cmd = new MySqlCommand("SELECT * FROM tb_projects", conn);
                 using (MySqlDataReader reader = cmd.ExecuteReader())
                 {
                     while (reader.Read())
                     {
-                        list.Add(new ProjectItem()
+                        list.Add(new TbProject()
                         {
-                            projectID = reader.GetInt32("projectID"),
-                            projectName = reader.GetString("projectName")
+                            ProjectId = reader.GetInt32("projectID"),
+                            ProjectName = reader.GetString("projectName")
                         });
                     }
                 }
