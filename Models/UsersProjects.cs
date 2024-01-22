@@ -7,19 +7,8 @@ using System.Threading.Tasks;
 
 namespace worklog_demo.Models
 {
-    public class WorklogItem
+    public class UsersProjects
     {
-        [Key]
-        public int LogID { get; set; }
-        [Required]
-        public TimeSpan LogStart { get; set; }
-        [Required]
-        public TimeSpan LogEnd { get; set; }
-        [Required]
-        public DateTime LogDate { get; set; }
-        [Required]
-        [StringLength(255)]
-        public string LogDetails { get; set; }
         [Required]
         public int UserID { get; set; }
         [Required]
