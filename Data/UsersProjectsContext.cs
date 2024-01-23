@@ -1,14 +1,17 @@
 ﻿using MySql.Data.MySqlClient;
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using worklog_demo.Models;
 
 namespace worklog_demo.Data
 {
-    public class ProjectContext
+    public class UsersProjectsContext
     {
         public string ConnectionString { get; set; }
 
-        public ProjectContext(string connectionString)
+        public UsersProjectsContext(string connectionString)
         {
             this.ConnectionString = connectionString;
         }
@@ -17,28 +20,27 @@ namespace worklog_demo.Data
         {
             return new MySqlConnection(ConnectionString);
         }
-
-        public List<TbProject> GetAllProject()
+        public List<TbUsersProject> GetProjectById(int id)
         {
-            List<TbProject> list = new List<TbProject>();
+            List<TbUsersProject> list = new List<TbUsersProject>();
             using (MySqlConnection conn = GetConnection())
             {
                 conn.Open();
-                MySqlCommand cmd = new MySqlCommand("SELECT * FROM tb_projects", conn);
+                MySqlCommand cmd = new MySqlCommand("SELECT * FROM tb_users_projects WHERE userId = @userId", conn);
+                cmd.Parameters.AddWithValue("@userId", id);
                 using (MySqlDataReader reader = cmd.ExecuteReader())
                 {
                     while (reader.Read())
                     {
-                        list.Add(new TbProject()
+                        list.Add(new TbUsersProject()
                         {
-                            ProjectId = reader.GetInt32("projectID"),
-                            ProjectName = reader.GetString("projectName")
+                            ProjectId = reader.GetInt32("ProjectID"),
+                            UserId = reader.GetInt32("UserId")
                         });
                     }
                 }
             }
             return list;
         }
-
     }
 }

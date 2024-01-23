@@ -26,8 +26,12 @@ namespace worklog_demo
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.Add(new ServiceDescriptor(typeof(Data.UserContext), new Data.UserContext(Configuration.GetConnectionString("DefaultConnection"))));
             services.Add(new ServiceDescriptor(typeof(Data.ProjectContext), new Data.ProjectContext(Configuration.GetConnectionString("DefaultConnection"))));
+            services.Add(new ServiceDescriptor(typeof(Data.LoginContext), new Data.LoginContext(Configuration.GetConnectionString("DefaultConnection"))));
+            services.Add(new ServiceDescriptor(typeof(Data.UsersProjectsContext), new Data.UsersProjectsContext(Configuration.GetConnectionString("DefaultConnection"))));
+            services.Add(new ServiceDescriptor(typeof(Data.WorklogsContext), new Data.WorklogsContext(Configuration.GetConnectionString("DefaultConnection"))));
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
