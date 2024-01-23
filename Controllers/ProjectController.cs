@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ using worklog_demo.Models;
 
 namespace worklog_demo.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class ProjectController : ControllerBase
     {
@@ -21,10 +22,24 @@ namespace worklog_demo.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<ProjectItem>> GetMovieItems()
+        [ProducesResponseType(200, Type = typeof(TbProject))]
+        [SwaggerResponse(204, "No Content")]
+        [ProducesResponseType(400)]
+        public ActionResult<IEnumerable<TbProject>> GetProjectsItem()
         {
             _context = HttpContext.RequestServices.GetService(typeof(ProjectContext)) as ProjectContext;
-            return _context.GetAllProject();
+            var projects = _context.GetAllProject();
+
+            if (projects.Count != 0) {
+                return NoContent();
+            }
+
+            if(!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            return Ok(projects);
         }
     }
 }

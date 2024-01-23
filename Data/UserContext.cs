@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 using MySql.Data.MySqlClient;
 using worklog_demo.Models;
@@ -23,9 +19,9 @@ namespace worklog_demo.Data
             return new MySqlConnection(ConnectionString);
         }
 
-        public List<UserItem> GetAllUsers()
+        public List<TbUser> GetAllUsers()
         {
-            List<UserItem> list = new List<UserItem>();
+            List<TbUser> list = new List<TbUser>();
             using (MySqlConnection conn = GetConnection())
             {
                 conn.Open();
@@ -34,12 +30,12 @@ namespace worklog_demo.Data
                 {
                     while (reader.Read())
                     {
-                        list.Add(new UserItem()
+                        list.Add(new TbUser()
                         {
-                            userID = reader.GetInt32("userID"),
-                            fullName = reader.GetString("fullName"),
-                            username = reader.GetString("username"),
-                            password = reader.GetString("password")
+                            UserId = reader.GetInt32("UserId"),
+                            Username = reader.GetString("Username"),
+                            Password = reader.GetString("Password"),
+                            FullName = reader.GetString("Fullname")
                         });
                     }
                 }
