@@ -32,19 +32,21 @@ namespace worklog_demo.Controllers
 
         [HttpGet]
         [ProducesResponseType(200, Type = typeof(UsersResponse))]
+        [ProducesResponseType(200, Type = typeof(UsersResponse))]
         [SwaggerResponse(204, "No Content")]
         [ProducesResponseType(400)]
+        public ActionResult<IEnumerable<UsersResponse>> GetUsersItem()
         public ActionResult<IEnumerable<UsersResponse>> GetUsersItem()
         {
             _userContext = HttpContext.RequestServices.GetService(typeof(UserContext)) as UserContext;
             var data = _userContext.GetAllUsers();
 
-            if(data.Count == 0)
+            if (data.Count == 0)
             {
                 return NoContent();
             }
 
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
@@ -81,7 +83,7 @@ namespace worklog_demo.Controllers
         {
             _userContext = HttpContext.RequestServices.GetService(typeof(UserContext)) as UserContext;
             _usersProjectsContext = HttpContext.RequestServices.GetService(typeof(UsersProjectsContext)) as UsersProjectsContext;
-            _worklogsContext = HttpContext.RequestServices.GetService(typeof(WorklogsContext)) as WorklogsContext; 
+            _worklogsContext = HttpContext.RequestServices.GetService(typeof(WorklogsContext)) as WorklogsContext;
             var user = _userContext.GetUserDetail(id);
             var projects = _mapper.Map<List<TbUsersProject>>(_usersProjectsContext.GetProjectById(id));
             var worklogs = _mapper.Map<List<TbWorklog>>(_worklogsContext.GetWorklogsByUserId(id));
@@ -91,7 +93,7 @@ namespace worklog_demo.Controllers
                 return NotFound();
             }
 
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
