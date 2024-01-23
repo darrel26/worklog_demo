@@ -86,7 +86,7 @@ namespace worklog_demo.Controllers
 
             var user = _userContext.GetUserDetail(id);
             var projects = _projectsContext.GetProjectForSpecificUser(id);
-            var worklogs = _mapper.Map<List<TbWorklog>>(_worklogsContext.GetWorklogsByUserId(id));
+            var worklogs = _mapper.Map<List<WorklogDTO>>(_worklogsContext.GetWorklogsByUserId(id));
 
 
             if (user == null)
@@ -106,6 +106,7 @@ namespace worklog_demo.Controllers
                 FullName = user.FullName,
                 Projects = projects,
                 Worklogs = worklogs
+
             });
         }
     }
