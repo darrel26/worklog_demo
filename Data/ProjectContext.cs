@@ -1,6 +1,6 @@
 ﻿using MySql.Data.MySqlClient;
 using System.Collections.Generic;
-using worklog_demo.Models;
+using worklog_demo.Models.DTO.Flattening;
 
 namespace worklog_demo.Data
 {
@@ -18,9 +18,9 @@ namespace worklog_demo.Data
             return new MySqlConnection(ConnectionString);
         }
 
-        public List<TbProject> GetAllProject()
+        public List<ProjectDTO> GetAllProject()
         {
-            List<TbProject> list = new List<TbProject>();
+            List<ProjectDTO> list = new List<ProjectDTO>();
             using (MySqlConnection conn = GetConnection())
             {
                 conn.Open();
@@ -29,7 +29,7 @@ namespace worklog_demo.Data
                 {
                     while (reader.Read())
                     {
-                        list.Add(new TbProject()
+                        list.Add(new ProjectDTO()
                         {
                             ProjectId = reader.GetInt32("projectID"),
                             ProjectName = reader.GetString("projectName")
@@ -38,6 +38,30 @@ namespace worklog_demo.Data
                 }
             }
             return list;
+        }
+
+        public List<ProjectDTO> GetProjectForSpecificUser(int userId)
+        {
+            List<ProjectDTO> list = new List<ProjectDTO>();
+            using (MySqlConnection conn = GetConnection())
+            {
+                conn.Open();
+                MySqlCommand cmd = new MySqlCommand("SELECT tbup.projectID, tbp.projectName FROM tb_users_projects tbup LEFT JOIN tb_projects tbp ON tbup.projectID = tbp.projectID WHERE tbup.userID = @userId;", conn);
+                cmd.Parameters.AddWithValue("@userId", userId);
+
+                using (MySqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        list.Add(new ProjectDTO()
+                        {
+                            ProjectId = reader.GetInt32("ProjectId"),
+                            ProjectName = reader.GetString("ProjectName")
+                        });
+                    }
+                }
+                return list;
+            }
         }
 
     }

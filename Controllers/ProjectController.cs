@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using worklog_demo.Data;
 using worklog_demo.Models;
+using worklog_demo.Models.DTO.Flattening;
 
 namespace worklog_demo.Controllers
 {
@@ -25,12 +26,12 @@ namespace worklog_demo.Controllers
         [ProducesResponseType(200, Type = typeof(TbProject))]
         [SwaggerResponse(204, "No Content")]
         [ProducesResponseType(400)]
-        public ActionResult<IEnumerable<TbProject>> GetProjectsItem()
+        public ActionResult<IEnumerable<ProjectDTO>> GetProjectsItem()
         {
             _context = HttpContext.RequestServices.GetService(typeof(ProjectContext)) as ProjectContext;
             var projects = _context.GetAllProject();
 
-            if (projects.Count != 0) {
+            if (projects.Count == 0) {
                 return NoContent();
             }
 
@@ -41,5 +42,7 @@ namespace worklog_demo.Controllers
 
             return Ok(projects);
         }
+
+        
     }
 }

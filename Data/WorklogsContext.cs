@@ -26,7 +26,7 @@ namespace worklog_demo.Data
             using (MySqlConnection conn = GetConnection())
             {
                 conn.Open();
-                MySqlCommand cmd = new MySqlCommand("SELECT * FROM tb_worklog WHERE userId = @userId", conn);
+                MySqlCommand cmd = new MySqlCommand("SELECT * FROM tb_worklog WHERE userId = @userId ORDER BY logDate ASC", conn);
                 cmd.Parameters.AddWithValue("@userId", id);
                 using (MySqlDataReader reader = cmd.ExecuteReader())
                 {
@@ -40,7 +40,7 @@ namespace worklog_demo.Data
                             LogDate = reader.GetDateTime("LogDate"),
                             LogDetails = reader.GetString("LogDetails"),
                             UserId = reader.GetInt32("UserId"),
-                            ProjectId = reader.GetInt32("ProjectId")
+                            ProjectId = reader.GetInt32("ProjectId"),
                         });
                     }
                 }
