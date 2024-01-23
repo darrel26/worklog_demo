@@ -28,6 +28,7 @@ namespace worklog_demo
         {
             services.Add(new ServiceDescriptor(typeof(Data.UserContext), new Data.UserContext(Configuration.GetConnectionString("DefaultConnection"))));
             services.Add(new ServiceDescriptor(typeof(Data.ProjectContext), new Data.ProjectContext(Configuration.GetConnectionString("DefaultConnection"))));
+            services.Add(new ServiceDescriptor(typeof(Data.LoginContext), new Data.LoginContext(Configuration.GetConnectionString("DefaultConnection"))));
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
