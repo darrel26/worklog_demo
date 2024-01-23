@@ -11,7 +11,6 @@ using worklog_demo.Models.DTO.Responses;
 namespace worklog_demo.Controllers
 {
     [Route("[controller]")]
-    [ProducesResponseType(200, Type = typeof(TbUser))]
     [ProducesResponseType(400)]
     [ApiController]
     public class UserController : ControllerBase
@@ -19,9 +18,9 @@ namespace worklog_demo.Controllers
         private readonly IMapper _mapper;
         private UserContext _userContext;
         private ProjectContext _projectsContext;
-        private WorklogsContext _worklogsContext;
+        private WorklogContext _worklogsContext;
 
-        public UserController(IMapper mapper, UserContext userContext, ProjectContext projectsContext, WorklogsContext worklogsContext)
+        public UserController(IMapper mapper, UserContext userContext, ProjectContext projectsContext, WorklogContext worklogsContext)
         {
             this._mapper = mapper;
             this._userContext = userContext;
@@ -31,10 +30,7 @@ namespace worklog_demo.Controllers
 
 
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(UsersResponse))]
-        [ProducesResponseType(200, Type = typeof(UsersResponse))]
         [SwaggerResponse(204, "No Content")]
-        [ProducesResponseType(400)]
         public ActionResult<IEnumerable<UsersResponse>> GetUsersItem()
         {
             _userContext = HttpContext.RequestServices.GetService(typeof(UserContext)) as UserContext;
@@ -56,7 +52,6 @@ namespace worklog_demo.Controllers
         [HttpGet("{id}")]
         [ProducesResponseType(200, Type = typeof(UsersResponse))]
         [SwaggerResponse(404, "Not Found")]
-        [ProducesResponseType(400)]
         public ActionResult<IEnumerable<UsersResponse>> GetSpecificUser(int id)
         {
             _userContext = HttpContext.RequestServices.GetService(typeof(UserContext)) as UserContext;
@@ -75,14 +70,13 @@ namespace worklog_demo.Controllers
         }
 
         [HttpGet("details/{id}")]
-        [ProducesResponseType(200, Type = typeof(UserDetailResponse))]
+        [ProducesResponseType(200, Type = typeof(UserDetailsDTO))]
         [SwaggerResponse(404, "Not Found")]
-        [ProducesResponseType(400)]
         public ActionResult<IEnumerable<UserDetailsDTO>> GetUserDetail(int id)
         {
             _userContext = HttpContext.RequestServices.GetService(typeof(UserContext)) as UserContext;
             _projectsContext = HttpContext.RequestServices.GetService(typeof(ProjectContext)) as ProjectContext;
-            _worklogsContext = HttpContext.RequestServices.GetService(typeof(WorklogsContext)) as WorklogsContext;
+            _worklogsContext = HttpContext.RequestServices.GetService(typeof(WorklogContext)) as WorklogContext;
 
             var user = _userContext.GetUserDetail(id);
             var projects = _projectsContext.GetProjectForSpecificUser(id);
