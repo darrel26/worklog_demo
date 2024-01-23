@@ -1,10 +1,13 @@
-﻿using MySql.Data.MySqlClient;
+﻿using Microsoft.AspNetCore.Mvc;
+using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using worklog_demo.Models;
 using worklog_demo.Models.DTO.Flattening;
+using worklog_demo.Models.DTO.Requests;
+using worklog_demo.Models.DTO.Responses;
 
 namespace worklog_demo.Data
 {
@@ -21,6 +24,7 @@ namespace worklog_demo.Data
         {
             return new MySqlConnection(ConnectionString);
         }
+
         public List<WorklogDTO> GetWorklogsByUserId(int id)
         {
             List<WorklogDTO> list = new List<WorklogDTO>();
@@ -35,28 +39,59 @@ namespace worklog_demo.Data
                     ORDER BY w.logDate ASC", conn
                 );
                 cmd.Parameters.AddWithValue("@userId", id);
-                using (MySqlDataReader reader = cmd.ExecuteReader())
+                using MySqlDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
                 {
-                    while (reader.Read())
+                    list.Add(new WorklogDTO()
                     {
-                        list.Add(new WorklogDTO()
+                        LogId = reader.GetInt32("LogId"),
+                        LogStart = reader.GetTimeSpan("LogStart"),
+                        LogEnd = reader.GetTimeSpan("LogEnd"),
+                        LogDate = reader.GetDateTime("LogDate"),
+                        LogDetails = reader.GetString("LogDetails"),
+                        UserId = reader.GetInt32("UserId"),
+                        Project = new ProjectDTO()
                         {
-                            LogId = reader.GetInt32("LogId"),
-                            LogStart = reader.GetTimeSpan("LogStart"),
-                            LogEnd = reader.GetTimeSpan("LogEnd"),
-                            LogDate = reader.GetDateTime("LogDate"),
-                            LogDetails = reader.GetString("LogDetails"),
-                            UserId = reader.GetInt32("UserId"),
-                            Project = new ProjectDTO()
-                            {
-                                ProjectId = reader.GetInt32("ProjectId"),
-                                ProjectName = reader.GetString("ProjectName")
-                            }
-                        });
-                    }
+                            ProjectId = reader.GetInt32("ProjectId"),
+                            ProjectName = reader.GetString("ProjectName")
+                        }
+                    });
                 }
             }
             return list;
+        }
+
+        public bool CreateWorklog(WorklogRequest worklogData)
+        {
+            try
+            {
+                using (MySqlConnection conn = GetConnection())
+                {
+                    conn.Open();
+                    MySqlCommand cmd = new MySqlCommand("INSERT INTO tb_worklog (`logStart`, `logEnd`, `logDate`, `logDetails`, `userID`, `projectID`) VALUES(@logStart, @logEnd, @logDate, @logDetails, @userId, @projectId)", conn);
+                    cmd.Parameters.AddWithValue("@logStart", worklogData.LogStart);
+                    cmd.Parameters.AddWithValue("@logEnd", worklogData.LogEnd);
+                    cmd.Parameters.AddWithValue("@logDate", worklogData.LogDate);
+                    cmd.Parameters.AddWithValue("@logDetails", worklogData.LogDetails);
+                    cmd.Parameters.AddWithValue("@userId", worklogData.UserId);
+                    cmd.Parameters.AddWithValue("@projectId", worklogData.ProjectId); 
+
+                    int rowsAffected = cmd.ExecuteNonQuery();
+
+                    if (rowsAffected > 0)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+            catch (MySqlException ex)
+            {
+                return false;
+            }
         }
     }
 }
