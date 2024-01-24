@@ -64,5 +64,25 @@ namespace worklog_demo.Data
             }
         }
 
+        public List<string> GetUsernameByProjectId(int projectId)
+        {
+            List<string> usernameList = new List<string>();
+            using (MySqlConnection conn = GetConnection())
+            {
+                conn.Open();
+                MySqlCommand cmd = new MySqlCommand("SELECT tbp.projectID as ID_Project, tbp.projectName, tbu.username FROM tb_projects tbp, tb_users_projects tbup, tb_users tbu WHERE tbp.projectID = tbup.projectID AND tbp.projectID = @projectId AND tbup.userID = tbu.userID GROUP BY tbp.projectName, tbu.username ORDER by ID_Project;", conn);
+                cmd.Parameters.AddWithValue("@projectId", projectId);
+
+                using (MySqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        usernameList.Add(reader.GetString("username"));
+                    }
+                }
+                return usernameList;
+            }
+        }
+
     }
 }

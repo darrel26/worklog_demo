@@ -15,6 +15,6 @@ namespace worklog_demo.Models.DTO.Flattening
         public string LogTitle { get; set; }
         public int UserId { get; set; }
 
-        public virtual ProjectDTO Project { get; set; }
+        public virtual CollaborationDTO Project { get; set; }
     }
 }

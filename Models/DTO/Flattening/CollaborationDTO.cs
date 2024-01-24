@@ -5,9 +5,8 @@ using System.Threading.Tasks;
 
 namespace worklog_demo.Models.DTO.Flattening
 {
-    public class ProjectDTO
+    public class CollaborationDTO : ProjectDTO
     {
-        public int ProjectId { get; set; }
-        public string ProjectName { get; set; }
+        public List<string> Collaboration { get; set; }
     }
 }
