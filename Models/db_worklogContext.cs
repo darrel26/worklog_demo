@@ -154,6 +154,11 @@ namespace worklog_demo.Models
                     .HasColumnType("int(11)")
                     .HasColumnName("userID");
 
+                entity.Property(e => e.LogTitle)
+                    .IsRequired()
+                    .HasMaxLength(255)
+                    .HasColumnName("logTitle");
+
                 entity.HasOne(d => d.Project)
                     .WithMany(p => p.Worklogs)
                     .HasForeignKey(d => d.ProjectId)

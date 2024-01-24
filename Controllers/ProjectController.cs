@@ -23,7 +23,7 @@ namespace worklog_demo.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(TbProject))]
+        [ProducesResponseType(200, Type = typeof(ProjectDTO))]
         [SwaggerResponse(204, "No Content")]
         [ProducesResponseType(400)]
         public ActionResult<IEnumerable<ProjectDTO>> GetProjectsItem()

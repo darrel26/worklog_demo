@@ -1,16 +1,10 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace worklog_demo
 {
@@ -31,7 +25,7 @@ namespace worklog_demo
             services.Add(new ServiceDescriptor(typeof(Data.ProjectContext), new Data.ProjectContext(Configuration.GetConnectionString("DefaultConnection"))));
             services.Add(new ServiceDescriptor(typeof(Data.LoginContext), new Data.LoginContext(Configuration.GetConnectionString("DefaultConnection"))));
             services.Add(new ServiceDescriptor(typeof(Data.UsersProjectsContext), new Data.UsersProjectsContext(Configuration.GetConnectionString("DefaultConnection"))));
-            services.Add(new ServiceDescriptor(typeof(Data.WorklogsContext), new Data.WorklogsContext(Configuration.GetConnectionString("DefaultConnection"))));
+            services.Add(new ServiceDescriptor(typeof(Data.WorklogContext), new Data.WorklogContext(Configuration.GetConnectionString("DefaultConnection"))));
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {

@@ -21,7 +21,7 @@ namespace worklog_demo.Controllers
         }
 
         [HttpPost]
-        [ProducesResponseType(200, Type = typeof(UsersResponse))]
+        [ProducesResponseType(200, Type = typeof(LoginResponse))]
         [SwaggerResponse(401, "Invalid Credentials")]
         [ProducesResponseType(400)]
         public ActionResult<IEnumerable<LoginResponse>> Login([FromBody] LoginRequest login)
