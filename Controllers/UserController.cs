@@ -18,14 +18,14 @@ namespace worklog_demo.Controllers
     {
         private readonly IMapper _mapper;
         private UserContext _userContext;
-        private UsersProjectsContext _usersProjectsContext;
+        private ProjectContext _projectsContext;
         private WorklogsContext _worklogsContext;
 
-        public UserController(IMapper mapper, UserContext userContext, UsersProjectsContext usersProjectsContext, WorklogsContext worklogsContext)
+        public UserController(IMapper mapper, UserContext userContext, ProjectContext projectsContext, WorklogsContext worklogsContext)
         {
             this._mapper = mapper;
             this._userContext = userContext;
-            this._usersProjectsContext = usersProjectsContext;
+            this._projectsContext = projectsContext;
             this._worklogsContext = worklogsContext;
         }
 
@@ -81,12 +81,13 @@ namespace worklog_demo.Controllers
         public ActionResult<IEnumerable<UserDetailsDTO>> GetUserDetail(int id)
         {
             _userContext = HttpContext.RequestServices.GetService(typeof(UserContext)) as UserContext;
-            _usersProjectsContext = HttpContext.RequestServices.GetService(typeof(UsersProjectsContext)) as UsersProjectsContext;
+            _projectsContext = HttpContext.RequestServices.GetService(typeof(ProjectContext)) as ProjectContext;
             _worklogsContext = HttpContext.RequestServices.GetService(typeof(WorklogsContext)) as WorklogsContext;
 
             var user = _userContext.GetUserDetail(id);
-            var projects = _mapper.Map<List<TbUsersProject>>(_usersProjectsContext.GetProjectById(id));
-            var worklogs = _mapper.Map<List<TbWorklog>>(_worklogsContext.GetWorklogsByUserId(id));
+            var projects = _projectsContext.GetProjectForSpecificUser(id);
+            var worklogs = _mapper.Map<List<WorklogDTO>>(_worklogsContext.GetWorklogsByUserId(id));
+
 
             if (user == null)
             {
@@ -105,6 +106,7 @@ namespace worklog_demo.Controllers
                 FullName = user.FullName,
                 Projects = projects,
                 Worklogs = worklogs
+
             });
         }
     }

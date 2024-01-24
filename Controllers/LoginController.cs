@@ -22,23 +22,34 @@ namespace worklog_demo.Controllers
 
         [HttpPost]
         [ProducesResponseType(200, Type = typeof(UsersResponse))]
-        [SwaggerResponse(404, "Not Found")]
+        [SwaggerResponse(401, "Invalid Credentials")]
         [ProducesResponseType(400)]
         public ActionResult<IEnumerable<LoginResponse>> Login([FromBody] LoginRequest login)
         {
             _context = HttpContext.RequestServices.GetService(typeof(LoginContext)) as LoginContext;
             var existingUser = _context.Login(login);
 
-
-            if (existingUser == null)
+            if(!ModelState.IsValid)
             {
-                return BadRequest(new LoginResponse()
+                return BadRequest();
+            }
+
+            if (existingUser.Username == null && existingUser.FullName == null)
+            {
+                return new JsonResult(new LoginResponse()
+                {
+                    messages = new UsersResponse()
                     {
-                        Errors = new List<string>() {
+                        UserId = 401,
+                        FullName = "Invalid Credentials",
+                        Username = "Invalid Credentials",
+                    },
+                    Errors = new List<string>() {
                             "Invalid login request"
                         },
-                        Success = false
-                    });
+                    Success = false
+                })
+                { StatusCode = 401 };
             }
 
             return Ok(new LoginResponse { 

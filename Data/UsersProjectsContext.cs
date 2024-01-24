@@ -1,4 +1,5 @@
-﻿using MySql.Data.MySqlClient;
+﻿using AutoMapper;
+using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,8 @@ namespace worklog_demo.Data
 {
     public class UsersProjectsContext
     {
+
+        public readonly IMapper _mapper;
         public string ConnectionString { get; set; }
 
         public UsersProjectsContext(string connectionString)
@@ -35,7 +38,7 @@ namespace worklog_demo.Data
                         list.Add(new TbUsersProject()
                         {
                             ProjectId = reader.GetInt32("ProjectID"),
-                            UserId = reader.GetInt32("UserId")
+                            UserId = reader.GetInt32("UserId"),
                         });
                     }
                 }
