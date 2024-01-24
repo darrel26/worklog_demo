@@ -21,6 +21,10 @@ namespace worklog_demo
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
+                }).ConfigureLogging(webBuilder => {
+                    webBuilder.ClearProviders();
+                    webBuilder.AddDebug();
+                    webBuilder.AddConsole();
                 });
     }
 }
