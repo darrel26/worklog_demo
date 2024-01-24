@@ -25,5 +25,8 @@ namespace worklog_demo.Models.DTO.Requests
         public int UserId { get; set; }
 
         public int ProjectId { get; set; }
+
+        [StringLength(50)]
+        public string LogTitle { get; set; }
     }
 }

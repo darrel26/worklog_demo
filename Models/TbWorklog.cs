@@ -15,6 +15,8 @@ namespace worklog_demo.Models
         public int UserId { get; set; }
         public int ProjectId { get; set; }
 
+        public string LogTitle { get; set; }
+
         public virtual TbProject Project { get; set; }
         public virtual TbUser User { get; set; }
     }

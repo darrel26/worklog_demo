@@ -12,6 +12,7 @@ namespace worklog_demo.Models.DTO.Flattening
         public TimeSpan LogEnd { get; set; }
         public DateTime LogDate { get; set; }
         public string LogDetails { get; set; }
+        public string LogTitle { get; set; }
         public int UserId { get; set; }
 
         public virtual ProjectDTO Project { get; set; }

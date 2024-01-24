@@ -44,6 +44,7 @@ namespace worklog_demo.Data
                 {
                     list.Add(new WorklogDTO()
                     {
+                        LogTitle = reader.GetString("LogTitle"),
                         LogId = reader.GetInt32("LogId"),
                         LogStart = reader.GetTimeSpan("LogStart"),
                         LogEnd = reader.GetTimeSpan("LogEnd"),
@@ -68,13 +69,14 @@ namespace worklog_demo.Data
                 using (MySqlConnection conn = GetConnection())
                 {
                     conn.Open();
-                    MySqlCommand cmd = new MySqlCommand("INSERT INTO tb_worklog (`logStart`, `logEnd`, `logDate`, `logDetails`, `userID`, `projectID`) VALUES(@logStart, @logEnd, @logDate, @logDetails, @userId, @projectId)", conn);
+                    MySqlCommand cmd = new MySqlCommand("INSERT INTO tb_worklog (`logStart`, `logEnd`, `logDate`, `logDetails`, `userID`, `projectID`, `logTitle`) VALUES(@logStart, @logEnd, @logDate, @logDetails, @userId, @projectId, @logTitle)", conn);
                     cmd.Parameters.AddWithValue("@logStart", worklogData.LogStart);
                     cmd.Parameters.AddWithValue("@logEnd", worklogData.LogEnd);
                     cmd.Parameters.AddWithValue("@logDate", worklogData.LogDate);
                     cmd.Parameters.AddWithValue("@logDetails", worklogData.LogDetails);
                     cmd.Parameters.AddWithValue("@userId", worklogData.UserId);
-                    cmd.Parameters.AddWithValue("@projectId", worklogData.ProjectId); 
+                    cmd.Parameters.AddWithValue("@projectId", worklogData.ProjectId);
+                    cmd.Parameters.AddWithValue("@logTitle", worklogData.LogTitle);
 
                     int rowsAffected = cmd.ExecuteNonQuery();
 
