@@ -43,6 +43,24 @@ namespace worklog_demo.Controllers
             return Ok(projects);
         }
 
-        
+        [HttpGet("{projectId}")]
+        public ActionResult<List<string>> GetUsernameByProjectId(int projectId)
+        {
+            _context = HttpContext.RequestServices.GetService(typeof(ProjectContext)) as ProjectContext;
+            var users = _context.GetUsernameByProjectId(projectId);
+
+            if (users.Count == 0)
+            {
+                return NoContent();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            return Ok(users);
+        }
+
     }
 }

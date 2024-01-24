@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
@@ -14,10 +15,12 @@ namespace worklog_demo.Data
     public class WorklogContext
     {
         public string ConnectionString { get; set; }
+        private readonly ProjectContext _projectContext;
 
-        public WorklogContext(string connectionString)
+        public WorklogContext(string connectionString, ProjectContext projectContext)
         {
             this.ConnectionString = connectionString;
+            this._projectContext = projectContext;
         }
 
         private MySqlConnection GetConnection()
@@ -51,14 +54,16 @@ namespace worklog_demo.Data
                         LogDate = reader.GetDateTime("LogDate"),
                         LogDetails = reader.GetString("LogDetails"),
                         UserId = reader.GetInt32("UserId"),
-                        Project = new ProjectDTO()
+                        Project = new CollaborationDTO()
                         {
                             ProjectId = reader.GetInt32("ProjectId"),
-                            ProjectName = reader.GetString("ProjectName")
-                        }
+                            ProjectName = reader.GetString("ProjectName"),
+                            Collaboration = _projectContext.GetUsernameByProjectId(reader.GetInt32("ProjectId"))
+                }
                     });
                 }
             }
+
             return list;
         }
 

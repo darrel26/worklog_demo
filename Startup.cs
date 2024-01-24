@@ -25,7 +25,7 @@ namespace worklog_demo
             services.Add(new ServiceDescriptor(typeof(Data.ProjectContext), new Data.ProjectContext(Configuration.GetConnectionString("DefaultConnection"))));
             services.Add(new ServiceDescriptor(typeof(Data.LoginContext), new Data.LoginContext(Configuration.GetConnectionString("DefaultConnection"))));
             services.Add(new ServiceDescriptor(typeof(Data.UsersProjectsContext), new Data.UsersProjectsContext(Configuration.GetConnectionString("DefaultConnection"))));
-            services.Add(new ServiceDescriptor(typeof(Data.WorklogContext), new Data.WorklogContext(Configuration.GetConnectionString("DefaultConnection"))));
+            services.Add(new ServiceDescriptor(typeof(Data.WorklogContext), new Data.WorklogContext(Configuration.GetConnectionString("DefaultConnection"), new Data.ProjectContext(Configuration.GetConnectionString("DefaultConnection")))));
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
