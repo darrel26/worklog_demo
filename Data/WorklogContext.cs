@@ -67,7 +67,7 @@ namespace worklog_demo.Data
             return list;
         }
 
-        public bool CreateWorklog(WorklogRequest worklogData)
+        public string CreateWorklog(WorklogRequest worklogData)
         {
             try
             {
@@ -87,17 +87,17 @@ namespace worklog_demo.Data
 
                     if (rowsAffected > 0)
                     {
-                        return true;
+                        return "Data successfully added!";
                     }
                     else
                     {
-                        return false;
+                        return "Failed to add data!";
                     }
                 }
             }
             catch (MySqlException ex)
             {
-                return false;
+                return ex.Message;
             }
         }
     }

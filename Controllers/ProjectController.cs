@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Serilog;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Collections.Generic;
@@ -32,14 +33,23 @@ namespace worklog_demo.Controllers
             var projects = _context.GetAllProject();
 
             if (projects.Count == 0) {
+                Log.Information("{HttpMethod} {Route} | {@response}", HttpContext.Request.Method, HttpContext.Request.Path, projects);
                 return NoContent();
             }
 
             if(!ModelState.IsValid)
             {
-                return BadRequest();
+                var errors = ModelState
+                    .Where(x => x.Value.Errors.Count > 0)
+                    .Select(x => $"{x.Key} : {x.Value.Errors}")
+                    .ToList();
+
+                Log.Error("{HttpMethod} {Route} | {@response}", HttpContext.Request.Method, HttpContext.Request.Path, errors);
+
+                return BadRequest(errors);
             }
 
+            Log.Information("{HttpMethod} {Route} | {@response}", HttpContext.Request.Method, HttpContext.Request.Path, projects);
             return Ok(projects);
         }
 
@@ -51,13 +61,24 @@ namespace worklog_demo.Controllers
 
             if (users.Count == 0)
             {
+                Log.Information("{HttpMethod} {Route} | {@response}", HttpContext.Request.Method, HttpContext.Request.Path, users);
+
                 return NoContent();
             }
 
             if (!ModelState.IsValid)
             {
-                return BadRequest();
+                var errors = ModelState
+                    .Where(x => x.Value.Errors.Count > 0)
+                    .Select(x => $"{x.Key} : {x.Value.Errors}")
+                    .ToList();
+
+                Log.Error("{HttpMethod} {Route} | {@response}", HttpContext.Request.Method, HttpContext.Request.Path, errors);
+
+                return BadRequest(errors);
             }
+
+            Log.Information("{HttpMethod} {Route} | {@response}", HttpContext.Request.Method, HttpContext.Request.Path, users);
 
             return Ok(users);
         }

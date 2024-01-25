@@ -80,7 +80,6 @@ namespace worklog_demo.Controllers
             var projects = _projectsContext.GetProjectForSpecificUser(id);
             var worklogs = _mapper.Map<List<WorklogDTO>>(_worklogsContext.GetWorklogsByUserId(id));
 
-
             if (user == null)
             {
                 return NotFound();

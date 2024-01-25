@@ -66,7 +66,7 @@ namespace worklog_demo.Controllers
 
                 response.Success = false;
 
-                Log.Warning("{HttpMethod} {Route} | {@successResponse}", HttpContext.Request.Method, HttpContext.Request.Path, response);
+                Log.Warning("{HttpMethod} {Route} | {@response}", HttpContext.Request.Method, HttpContext.Request.Path, response);
 
                 return new JsonResult(response)
                 { StatusCode = 401 };
@@ -74,7 +74,7 @@ namespace worklog_demo.Controllers
 
             response.messages = existingUser;
 
-            Log.Information("{HttpMethod} {Route} | {@successResponse}",HttpContext.Request.Method, HttpContext.Request.Path, response);
+            Log.Information("{HttpMethod} {Route} | {@response}",HttpContext.Request.Method, HttpContext.Request.Path, response);
 
             return Ok(response);
         }
