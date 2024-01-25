@@ -53,11 +53,15 @@ namespace worklog_demo
 
             app.UseRouting();
 
+            app.UseSentryTracing();
+
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers();
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
             });
         }
     }

@@ -6,16 +6,20 @@ using worklog_demo.Models.DTO.Requests;
 using Swashbuckle.AspNetCore.Annotations;
 using Serilog;
 using System.Linq;
+using Sentry;
 
 namespace worklog_demo.Controllers
 {
     [Route("[Controller]")]
     public class LoginController : ControllerBase
     {
+        private readonly IHub _sentryHub;
+
         private LoginContext _context;
 
-        public LoginController(LoginContext context)
+        public LoginController(IHub sentryHub, LoginContext context)
         {
+            _sentryHub = sentryHub;
             _context = context;
         }
 
@@ -25,6 +29,8 @@ namespace worklog_demo.Controllers
         [ProducesResponseType(400)]
         public ActionResult<IEnumerable<LoginResponse>> Login([FromBody] LoginRequest login)
         {
+            var childSpan = _sentryHub.GetSpan()?.StartChild("login-sentry-work");
+
             LoginResponse response = new LoginResponse
             {
                 Success = true,
@@ -32,51 +38,66 @@ namespace worklog_demo.Controllers
                 messages = null
             };
 
-            if (!ModelState.IsValid)
+            try
             {
-                var errors = ModelState
-                    .Where(x => x.Value.Errors.Count > 0)
-                    .Select(x => $"{x.Key} : {x.Value.Errors}")
-                    .ToList();
+                if (!ModelState.IsValid)
+                {
+                    var errors = ModelState
+                        .Where(x => x.Value.Errors.Count > 0)
+                        .Select(x => $"{x.Key} : {x.Value.Errors}")
+                        .ToList();
 
-                response.Success = false;
-                response.Errors = errors;
+                    response.Success = false;
+                    response.Errors = errors;
 
-                Log.Error("{HttpMethod} {Route} | {@ErrorCause}", HttpContext.Request.Method, HttpContext.Request.Path, response.Errors);
+                    Log.Error("{HttpMethod} {Route} | {@ErrorCause}", HttpContext.Request.Method, HttpContext.Request.Path, response.Errors);
 
-                return BadRequest(response);
-            }
+                    childSpan?.Finish(SpanStatus.Ok);
 
-            _context = HttpContext.RequestServices.GetService(typeof(LoginContext)) as LoginContext;
-            var existingUser = _context.Login(login);
+                    return BadRequest(response);
+                }
 
-            if (existingUser.Username == null && existingUser.FullName == null)
-            {
-                response.Errors = new List<string>()
+                _context = HttpContext.RequestServices.GetService(typeof(LoginContext)) as LoginContext;
+                var existingUser = _context.Login(login);
+
+                if (existingUser.Username == null && existingUser.FullName == null)
+                {
+                    response.Errors = new List<string>()
                 {
                     "Invalid Login Request!"
                 };
 
-                response.messages = new UsersResponse()
-                {
-                    UserId = 401,
-                    FullName = "Invalid Credentials",
-                    Username = "Invalid Credentials",
-                };
+                    response.messages = new UsersResponse()
+                    {
+                        UserId = 401,
+                        FullName = "Invalid Credentials",
+                        Username = "Invalid Credentials",
+                    };
 
-                response.Success = false;
+                    response.Success = false;
 
-                Log.Warning("{HttpMethod} {Route} | {@response}", HttpContext.Request.Method, HttpContext.Request.Path, response);
+                    Log.Warning("{HttpMethod} {Route} | {@response}", HttpContext.Request.Method, HttpContext.Request.Path, response);
 
-                return new JsonResult(response)
-                { StatusCode = 401 };
+                    childSpan?.Finish(SpanStatus.Ok);
+
+                    return new JsonResult(response)
+                    { StatusCode = 401 };
+                }
+
+                response.messages = existingUser;
+
+                Log.Information("{HttpMethod} {Route} | {@response}", HttpContext.Request.Method, HttpContext.Request.Path, response);
+
+                childSpan?.Finish(SpanStatus.Ok);
+
+                return Ok(response);
             }
+            catch (System.Exception e)
+            {
 
-            response.messages = existingUser;
-
-            Log.Information("{HttpMethod} {Route} | {@response}",HttpContext.Request.Method, HttpContext.Request.Path, response);
-
-            return Ok(response);
+                childSpan?.Finish(e);
+                throw;
+            }
         }
     }
 }
