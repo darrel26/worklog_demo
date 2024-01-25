@@ -85,7 +85,7 @@ namespace worklog_demo.Controllers
             });
         }
 
-        [HttpGet("Project/Date")]
+        [HttpGet("Date")]
         public ActionResult<FilterWorklogDTO> FilterWorklogByDate([FromQuery] FilterWorklogByDateDTO worklogRequest)
         {
             List<WorklogDTO> worklogData;
