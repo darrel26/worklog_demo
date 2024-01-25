@@ -2,9 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
-using System.Linq;
 using worklog_demo.Data;
-using worklog_demo.Models;
 using worklog_demo.Models.DTO.Flattening;
 using worklog_demo.Models.DTO.Responses;
 
@@ -82,7 +80,6 @@ namespace worklog_demo.Controllers
             var projects = _projectsContext.GetProjectForSpecificUser(id);
             var worklogs = _mapper.Map<List<WorklogDTO>>(_worklogsContext.GetWorklogsByUserId(id));
 
-
             if (user == null)
             {
                 return NotFound();
@@ -100,7 +97,6 @@ namespace worklog_demo.Controllers
                 FullName = user.FullName,
                 Projects = projects,
                 Worklogs = worklogs
-
             });
         }
     }

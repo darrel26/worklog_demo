@@ -1,12 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using worklog_demo.Data;
 using worklog_demo.Models.DTO.Responses;
 using worklog_demo.Models.DTO.Requests;
 using Swashbuckle.AspNetCore.Annotations;
+using Serilog;
+using System.Linq;
 
 namespace worklog_demo.Controllers
 {
@@ -26,37 +25,58 @@ namespace worklog_demo.Controllers
         [ProducesResponseType(400)]
         public ActionResult<IEnumerable<LoginResponse>> Login([FromBody] LoginRequest login)
         {
+            LoginResponse response = new LoginResponse
+            {
+                Success = true,
+                Errors = null,
+                messages = null
+            };
+
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState
+                    .Where(x => x.Value.Errors.Count > 0)
+                    .Select(x => $"{x.Key} : {x.Value.Errors}")
+                    .ToList();
+
+                response.Success = false;
+                response.Errors = errors;
+
+                Log.Error("{HttpMethod} {Route} | {@ErrorCause}", HttpContext.Request.Method, HttpContext.Request.Path, response.Errors);
+
+                return BadRequest(response);
+            }
+
             _context = HttpContext.RequestServices.GetService(typeof(LoginContext)) as LoginContext;
             var existingUser = _context.Login(login);
 
-            if(!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-
             if (existingUser.Username == null && existingUser.FullName == null)
             {
-                return new JsonResult(new LoginResponse()
+                response.Errors = new List<string>()
                 {
-                    messages = new UsersResponse()
-                    {
-                        UserId = 401,
-                        FullName = "Invalid Credentials",
-                        Username = "Invalid Credentials",
-                    },
-                    Errors = new List<string>() {
-                            "Invalid login request"
-                        },
-                    Success = false
-                })
+                    "Invalid Login Request!"
+                };
+
+                response.messages = new UsersResponse()
+                {
+                    UserId = 401,
+                    FullName = "Invalid Credentials",
+                    Username = "Invalid Credentials",
+                };
+
+                response.Success = false;
+
+                Log.Warning("{HttpMethod} {Route} | {@response}", HttpContext.Request.Method, HttpContext.Request.Path, response);
+
+                return new JsonResult(response)
                 { StatusCode = 401 };
             }
 
-            return Ok(new LoginResponse { 
-                Success = true,
-                Errors = null,
-                messages = existingUser
-            });
+            response.messages = existingUser;
+
+            Log.Information("{HttpMethod} {Route} | {@response}",HttpContext.Request.Method, HttpContext.Request.Path, response);
+
+            return Ok(response);
         }
     }
 }
