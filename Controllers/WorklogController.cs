@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Serilog;
 using Swashbuckle.AspNetCore.Annotations;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using worklog_demo.Data;
+using worklog_demo.Models.DTO.Flattening;
 using worklog_demo.Models.DTO.Requests;
 using worklog_demo.Models.DTO.Responses;
 
@@ -80,6 +82,54 @@ namespace worklog_demo.Controllers
                     },
                 Messages = "Internal Server Error!",
                 Success = false
+            });
+        }
+
+        [HttpGet]
+        public ActionResult<FilterWorklogByDateResponseDTO> FilterWorklogByDate([FromQuery] FilterWorklogByDateDTO worklogRequest)
+        {
+            List<WorklogDTO> worklogData;
+
+            try
+            {
+                _context = HttpContext.RequestServices.GetService(typeof(WorklogContext)) as WorklogContext;
+                worklogData = _context.FilterWorklogByDate(worklogRequest);
+            }
+
+            catch (Exception err)
+            {
+                Log.Error("{HttpMethod} {Route} | {@error}", HttpContext.Request.Method, HttpContext.Request.Path, err.Message);
+                return BadRequest(new FilterWorklogByDateResponseDTO()
+                {
+                    Errors = new List<string>() { 
+                        err.Message
+                    },
+                    Messages = err.InnerException,
+                    Success = false
+
+                });
+            }
+
+            if (worklogData.Count == 0)
+            {
+                Log.Information("{HttpMethod} {Route} | {@response}", HttpContext.Request.Method, HttpContext.Request.Path, $"Data Count : {worklogData.Count}");
+                return NotFound(new FilterWorklogByDateResponseDTO()
+                {
+                    Errors = new List<string> {
+                        "No data found!"
+                    },
+                    Messages = "Data not found",
+                    Success = true
+                });
+            }
+
+            Log.Information("{HttpMethod} {Route} | {@response}", HttpContext.Request.Method, HttpContext.Request.Path, worklogData);
+            
+            return Ok(new FilterWorklogByDateResponseDTO()
+            {
+                Errors = null,
+                Messages = worklogData,
+                Success = true
             });
         }
     }
