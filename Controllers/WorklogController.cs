@@ -85,8 +85,8 @@ namespace worklog_demo.Controllers
             });
         }
 
-        [HttpGet]
-        public ActionResult<FilterWorklogByDateResponseDTO> FilterWorklogByDate([FromQuery] FilterWorklogByDateDTO worklogRequest)
+        [HttpGet("Project/Date")]
+        public ActionResult<FilterWorklogDTO> FilterWorklogByDate([FromQuery] FilterWorklogByDateDTO worklogRequest)
         {
             List<WorklogDTO> worklogData;
 
@@ -99,7 +99,7 @@ namespace worklog_demo.Controllers
             catch (Exception err)
             {
                 Log.Error("{HttpMethod} {Route} | {@error}", HttpContext.Request.Method, HttpContext.Request.Path, err.Message);
-                return BadRequest(new FilterWorklogByDateResponseDTO()
+                return BadRequest(new FilterWorklogDTO()
                 {
                     Errors = new List<string>() { 
                         err.Message
@@ -113,7 +113,7 @@ namespace worklog_demo.Controllers
             if (worklogData.Count == 0)
             {
                 Log.Information("{HttpMethod} {Route} | {@response}", HttpContext.Request.Method, HttpContext.Request.Path, $"Data Count : {worklogData.Count}");
-                return NotFound(new FilterWorklogByDateResponseDTO()
+                return NotFound(new FilterWorklogDTO()
                 {
                     Errors = new List<string> {
                         "No data found!"
@@ -125,7 +125,55 @@ namespace worklog_demo.Controllers
 
             Log.Information("{HttpMethod} {Route} | {@response}", HttpContext.Request.Method, HttpContext.Request.Path, worklogData);
             
-            return Ok(new FilterWorklogByDateResponseDTO()
+            return Ok(new FilterWorklogDTO()
+            {
+                Errors = null,
+                Messages = worklogData,
+                Success = true
+            });
+        }
+
+        [HttpGet("Project/Name")]
+        public ActionResult<FilterWorklogByProjectDTO> FilterWorklogByProject([FromQuery] FilterWorklogByProjectDTO worklogRequest)
+        {
+            List<WorklogDTO> worklogData;
+
+            try
+            {
+                _context = HttpContext.RequestServices.GetService(typeof(WorklogContext)) as WorklogContext;
+                worklogData = _context.FilterWorklogByProjectName(worklogRequest);
+            }
+
+            catch (Exception err)
+            {
+                Log.Error("{HttpMethod} {Route} | {@error}", HttpContext.Request.Method, HttpContext.Request.Path, err.Message);
+                return BadRequest(new FilterWorklogDTO()
+                {
+                    Errors = new List<string>() {
+                        err.Message
+                    },
+                    Messages = err.InnerException,
+                    Success = false
+
+                });
+            }
+
+            if (worklogData.Count == 0)
+            {
+                Log.Information("{HttpMethod} {Route} | {@response}", HttpContext.Request.Method, HttpContext.Request.Path, $"Data Count : {worklogData.Count}");
+                return NotFound(new FilterWorklogDTO()
+                {
+                    Errors = new List<string> {
+                        "No data found!"
+                    },
+                    Messages = "Data not found",
+                    Success = true
+                });
+            }
+
+            Log.Information("{HttpMethod} {Route} | {@response}", HttpContext.Request.Method, HttpContext.Request.Path, worklogData);
+
+            return Ok(new FilterWorklogDTO()
             {
                 Errors = null,
                 Messages = worklogData,
