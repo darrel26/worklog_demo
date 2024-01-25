@@ -59,7 +59,7 @@ namespace worklog_demo.Data
                             ProjectId = reader.GetInt32("ProjectId"),
                             ProjectName = reader.GetString("ProjectName"),
                             Collaboration = _projectContext.GetUsernameByProjectId(reader.GetInt32("ProjectId"))
-                }
+                        }
                     });
                 }
             }
@@ -99,6 +99,49 @@ namespace worklog_demo.Data
             {
                 return ex.Message;
             }
+        }
+
+        public List<WorklogDTO> FilterWorklogByDate(FilterWorklogByDateDTO request)
+        {
+            List<WorklogDTO> list = new List<WorklogDTO>();
+            using (MySqlConnection conn = GetConnection())
+            {
+                conn.Open();
+                MySqlCommand cmd = new MySqlCommand(@"
+                    SELECT w.*, p.ProjectName
+                    FROM tb_worklog w
+                    JOIN tb_projects p ON w.ProjectId = p.ProjectId
+                    WHERE w.UserId = @userId
+                    AND w.logDate between @dateStart and @dateEnd
+                    ORDER BY w.logDate ASC", conn
+                );
+                cmd.Parameters.AddWithValue("@dateStart", request.DateStart);
+                cmd.Parameters.AddWithValue("@dateEnd", request.DateEnd);
+                cmd.Parameters.AddWithValue("@userId", request.UserId);
+
+                using MySqlDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    list.Add(new WorklogDTO()
+                    {
+                        LogTitle = reader.GetString("LogTitle"),
+                        LogId = reader.GetInt32("LogId"),
+                        LogStart = reader.GetTimeSpan("LogStart"),
+                        LogEnd = reader.GetTimeSpan("LogEnd"),
+                        LogDate = reader.GetDateTime("LogDate"),
+                        LogDetails = reader.GetString("LogDetails"),
+                        UserId = reader.GetInt32("UserId"),
+                        Project = new CollaborationDTO()
+                        {
+                            ProjectId = reader.GetInt32("ProjectId"),
+                            ProjectName = reader.GetString("ProjectName"),
+                            Collaboration = _projectContext.GetUsernameByProjectId(reader.GetInt32("ProjectId"))
+                        }
+                    });
+                }
+            }
+
+            return list;
         }
     }
 }

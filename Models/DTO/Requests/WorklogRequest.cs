@@ -17,6 +17,8 @@ namespace worklog_demo.Models.DTO.Requests
         public string LogEnd { get; set; }
 
         [Required]
+        [DataType(DataType.Date)]
+        [Display(Name ="yyyy-mm-dd")]
         public DateTime LogDate { get; set; }
 
         [StringLength(255)]
