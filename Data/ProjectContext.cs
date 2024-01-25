@@ -83,6 +83,5 @@ namespace worklog_demo.Data
                 return usernameList;
             }
         }
-
     }
 }
