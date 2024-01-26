@@ -65,7 +65,7 @@ namespace worklog_demo
                     Log.Logger = new LoggerConfiguration()
                         .WriteTo.Sentry(o =>
                         {
-                            o.MinimumBreadcrumbLevel = LogEventLevel.Information;
+                            o.MinimumBreadcrumbLevel = LogEventLevel.Debug;
                             o.MinimumEventLevel = LogEventLevel.Warning;
                         })
                         .Enrich.FromLogContext()
