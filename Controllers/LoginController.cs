@@ -6,6 +6,8 @@ using worklog_demo.Models.DTO.Requests;
 using Swashbuckle.AspNetCore.Annotations;
 using Serilog;
 using System.Linq;
+using Sentry;
+using System;
 
 namespace worklog_demo.Controllers
 {
@@ -25,6 +27,7 @@ namespace worklog_demo.Controllers
         [ProducesResponseType(400)]
         public ActionResult<IEnumerable<LoginResponse>> Login([FromBody] LoginRequest login)
         {
+
             LoginResponse response = new LoginResponse
             {
                 Success = true,
@@ -74,7 +77,7 @@ namespace worklog_demo.Controllers
 
             response.messages = existingUser;
 
-            Log.Information("{HttpMethod} {Route} | {@response}",HttpContext.Request.Method, HttpContext.Request.Path, response);
+            Log.Information("{HttpMethod} {Route} | {@response}", HttpContext.Request.Method, HttpContext.Request.Path, response);
 
             return Ok(response);
         }

@@ -3,9 +3,11 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using System;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace worklog_demo
 {
@@ -32,11 +34,6 @@ namespace worklog_demo
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "worklog_demo", Version = "v1" });
             });
-
-            Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Information()
-                .WriteTo.Console()
-                .CreateLogger();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -50,14 +47,17 @@ namespace worklog_demo
             }
             
             app.UseHttpsRedirection();
-
             app.UseRouting();
+
+            app.UseSentryTracing();
 
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers();
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
             });
         }
     }

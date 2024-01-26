@@ -61,6 +61,7 @@ namespace worklog_demo.Controllers
                     Success = false
                 })
                 { StatusCode = 500 };
+                        
             } else if(exisitingWorklog == "Data successfully added!")
             {
                 Log.Information("{HttpMethod} {Route} | {@response}", HttpContext.Request.Method, HttpContext.Request.Path, exisitingWorklog);
