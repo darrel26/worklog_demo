@@ -51,3 +51,14 @@ The following NuGet packages are used in this project:
 ## API Documentation
 
 Swagger Api Documentation for [Worklog Demo Application](https://app.swaggerhub.com/apis/DIONISIUSGUNADI/worklog-demo/v1 "Redirect to SwaggerHub").
+
+## MySql Setup
+
+1. Create a database using MySql
+2. Go to `DbSchema` folder and import `db_worklog.sql` to automatically generate your database table
+3. Setup your connection string inside appsenttings.json
+   ```JSON
+   "ConnectionStrings": {
+    "DefaultConnection": "Server=<server_name>;Port=<db_port>;Database=<db_name>;Uid=<user_id>;Pwd=<user_password>"
+   },
+   ```
