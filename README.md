@@ -1,5 +1,11 @@
 # Worklog API
 
+![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed-raw/darrel26/worklog_demo)
+![GitHub contributors](https://img.shields.io/github/contributors/darrel26/worklog_demo)
+![Sentry Badge](https://img.shields.io/badge/Sentry-362D59?logo=sentry&logoColor=fff&style=flat-square)
+![.NET Badge](https://img.shields.io/badge/.NET-512BD4?logo=dotnet&logoColor=fff&style=flat-square)
+![MySQL Badge](https://img.shields.io/badge/MySQL-4479A1?logo=mysql&logoColor=fff&style=flat-square)
+
 ## Overview
 
 This repository contains the source code for the Worklog API, a web API built using ASP.NET 5.0. It provides endpoints for managing worklogs, projects, and related data.
